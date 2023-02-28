@@ -1,0 +1,267 @@
+#### Paula Montagnana
+#### 2020 02 D2
+
+#' From Montagnana, PC et al (2021)"Landscape heterogeneity and forest cover shape
+#' cavity-nesting hymenopteran communities in a multi-scale perspective", 
+#' Basic and Applied Ecology
+#' Doi: 10.1016/j.baae.2021.08.004
+
+### Mixed, univariate and bivariate models
+#' Response variables = Community Ecology metrics (species richness, abundance and
+#' taxonomic diversity)
+#'Predictive variables = Landscape Ecology metrics (% forest cover, landscape heterogeneity
+#'(SHDI) and functional connectivity of forest fragments)
+#' 
+# Directory
+setwd("C:\\Users\\User\\Google Drive")
+
+dados<-read.table("dados_cap4.txt", head=T, sep="\t")
+
+# Packages
+require(nlme)
+
+require(bbmle)
+
+require(akima)
+
+require(ggplot2)
+
+
+### Bee species richness
+
+nulo.ra<-glm(riq_bee~1, data=dados)
+hete1km.ra<-lme(riq_bee~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.ra<-lme(riq_bee~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.ra<-lme(riq_bee~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.ra<-lme(riq_bee~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.ra<-lme(riq_bee~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.ra<-lme(riq_bee~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.ra<-lme(riq_bee~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.ra<-lme(riq_bee~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.ra<-lme(riq_bee~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.ra<-lme(riq_bee~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.ra<-lme(riq_bee~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.ra<-lme(riq_bee~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+# Model selection according to the Akaike Criterion for small samples (AICc)
+ICtab(nulo.ra,hete1km.ra,hete5km.ra,flo1km.ra,flo5km.ra,
+      fragsize.ra,con1km.ra,m.tam1km.flo5km.ra,m.tam1km.hete5km.ra,m.flo1km.hete5km.ra,
+      m.hete1km.flo5km.ra,m.con1km.flo5km.ra,m.con1km.hete5km.ra,
+      type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Bee abundance
+
+nulo.aa<-glm(c_total_bee~1, data=dados)
+hete1km.aa<-lme(c_total_bee~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.aa<-lme(c_total_bee~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.aa<-lme(c_total_bee~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.aa<-lme(c_total_bee~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.aa<-lme(c_total_bee~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.aa<-lme(c_total_bee~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.aa<-lme(c_total_bee~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.aa<-lme(c_total_bee~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.aa<-lme(c_total_bee~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.aa<-lme(c_total_bee~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.aa<-lme(c_total_bee~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.aa<-lme(c_total_bee~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.aa,hete1km.aa,hete5km.aa,flo1km.aa,flo5km.aa,
+      fragsize.aa,con1km.aa,m.tam1km.flo5km.aa,m.tam1km.hete5km.aa,m.flo1km.hete5km.aa,
+      m.hete1km.flo5km.aa,m.con1km.flo5km.aa,m.con1km.hete5km.aa,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Bee taxonomic diversity
+
+nulo.da<-glm(delta_mais_bee~1, data=dados)
+hete1km.da<-lme(delta_mais_bee~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.da<-lme(delta_mais_bee~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.da<-lme(delta_mais_bee~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.da<-lme(delta_mais_bee~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.da<-lme(delta_mais_bee~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.da<-lme(delta_mais_bee~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.da<-lme(delta_mais_bee~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.da<-lme(delta_mais_bee~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.da<-lme(delta_mais_bee~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.da<-lme(delta_mais_bee~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.da<-lme(delta_mais_bee~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.da<-lme(delta_mais_bee~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.da,hete1km.da,hete5km.da,flo1km.da,flo5km.da,
+      fragsize.da,con1km.da,m.tam1km.flo5km.da,m.tam1km.hete5km.da,m.flo1km.hete5km.da,
+      m.hete1km.flo5km.da,m.con1km.flo5km.da,m.con1km.hete5km.da,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Wasp species richness
+
+nulo.rv<-glm(riq_wasp~1, data=dados)
+hete1km.rv<-lme(riq_wasp~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.rv<-lme(riq_wasp~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.rv<-lme(riq_wasp~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.rv<-lme(riq_wasp~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.rv<-lme(riq_wasp~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.rv<-lme(riq_wasp~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.rv<-lme(riq_wasp~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.rv<-lme(riq_wasp~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.rv<-lme(riq_wasp~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.rv<-lme(riq_wasp~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.rv<-lme(riq_wasp~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.rv<-lme(riq_wasp~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.rv,hete1km.rv,hete5km.rv,flo1km.rv,flo5km.rv,
+      fragsize.rv,con1km.rv,m.tam1km.flo5km.rv,m.tam1km.hete5km.rv,m.flo1km.hete5km.rv,
+      m.hete1km.flo5km.rv,m.con1km.flo5km.rv,m.con1km.hete5km.rv,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Wasp abundance
+
+nulo.av<-glm(c_total_wasp~1, data=dados)
+hete1km.av<-lme(c_total_wasp~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.av<-lme(c_total_wasp~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.av<-lme(c_total_wasp~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.av<-lme(c_total_wasp~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.av<-lme(c_total_wasp~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.av<-lme(c_total_wasp~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.av<-lme(c_total_wasp~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.av<-lme(c_total_wasp~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.av<-lme(c_total_wasp~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.av<-lme(c_total_wasp~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.av<-lme(c_total_wasp~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.av<-lme(c_total_wasp~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.av,hete1km.av,hete5km.av,flo1km.av,flo5km.av,
+      fragsize.av,con1km.av,m.tam1km.flo5km.av,m.tam1km.hete5km.av,m.flo1km.hete5km.av,
+      m.hete1km.flo5km.av,m.con1km.flo5km.av,m.con1km.hete5km.av,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+#### Crabronidae wasps abundance
+nulo.ac<-glm(crabronidae_abund~1, data=dados)
+hete1km.ac<-lme(crabronidae_abund~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.ac<-lme(crabronidae_abund~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.ac<-lme(crabronidae_abund~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.ac<-lme(crabronidae_abund~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.ac<-lme(crabronidae_abund~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.ac<-lme(crabronidae_abund~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.ac<-lme(crabronidae_abund~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.ac<-lme(crabronidae_abund~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.ac<-lme(crabronidae_abund~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.ac<-lme(crabronidae_abund~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.ac<-lme(crabronidae_abund~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.ac<-lme(crabronidae_abund~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.ac,hete1km.ac,hete5km.ac,flo1km.ac,flo5km.ac,
+      fragsize.ac,con1km.ac,m.tam1km.flo5km.ac,m.tam1km.hete5km.ac,m.flo1km.hete5km.ac,
+      m.hete1km.flo5km.ac,m.con1km.flo5km.ac,m.con1km.hete5km.ac,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Vespidae wasp abundance
+
+nulo.ave<-glm(vespidae_abund~1, data=dados)
+hete1km.ave<-lme(vespidae_abund~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.ave<-lme(vespidae_abund~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.ave<-lme(vespidae_abund~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.ave<-lme(vespidae_abund~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.ave<-lme(vespidae_abund~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.ave<-lme(vespidae_abund~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.ave<-lme(vespidae_abund~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.ave<-lme(vespidae_abund~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.ave<-lme(vespidae_abund~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.ave<-lme(vespidae_abund~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.ave<-lme(vespidae_abund~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.ave<-lme(vespidae_abund~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.ave,hete1km.ave,hete5km.ave,flo1km.ave,flo5km.ave,
+      fragsize.ave,con1km.ave,m.tam1km.flo5km.ave,m.tam1km.hete5km.ave,m.flo1km.hete5km.ave,
+      m.hete1km.flo5km.ave,m.con1km.flo5km.ave,m.con1km.hete5km.ave,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+
+### Wasp taxonomic diversity 
+
+nulo.dv<-glm(delta_mais_wasp~1, data=dados)
+hete1km.dv<-lme(delta_mais_wasp~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.dv<-lme(delta_mais_wasp~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.dv<-lme(delta_mais_wasp~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.dv<-lme(delta_mais_wasp~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.dv<-lme(delta_mais_wasp~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.dv<-lme(delta_mais_wasp~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.dv<-lme(delta_mais_wasp~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.dv<-lme(delta_mais_wasp~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.dv<-lme(delta_mais_wasp~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.dv<-lme(delta_mais_wasp~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.dv<-lme(delta_mais_wasp~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.dv<-lme(delta_mais_wasp~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.dv,hete1km.dv,hete5km.dv,flo1km.dv,flo5km.dv,
+      fragsize.dv,con1km.dv,m.tam1km.flo5km.dv,m.tam1km.hete5km.dv,m.flo1km.hete5km.dv,
+      m.hete1km.flo5km.dv,m.con1km.flo5km.dv,m.con1km.hete5km.dv,type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Natural enemy species richness
+
+nulo.rp<-glm(riq_parasi~1, data=dados)
+hete1km.rp<-lme(riq_parasi~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.rp<-lme(riq_parasi~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.rp<-lme(riq_parasi~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.rp<-lme(riq_parasi~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.rp<-lme(riq_parasi~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.rp<-lme(riq_parasi~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.rp<-lme(riq_parasi~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.rp<-lme(riq_parasi~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.rp<-lme(riq_parasi~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.rp<-lme(riq_parasi~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.rp<-lme(riq_parasi~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.rp<-lme(riq_parasi~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+riqhost.rp<-lme(riq_parasi~riq_total ,random=~1|year, method = "REML", data=dados)
+
+
+
+ICtab(nulo.rp,hete1km.rp,hete5km.rp,flo1km.rp,flo5km.rp,
+      fragsize.rp,con1km.rp,m.tam1km.flo5km.rp,m.tam1km.hete5km.rp,m.flo1km.hete5km.rp,
+      m.hete1km.flo5km.rp,m.con1km.flo5km.rp,m.con1km.hete5km.rp,riqhost.rp,
+      type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Natural enemy abundance
+
+nulo.ap<-glm(c_parasi~1, data=dados)
+hete1km.ap<-lme(c_parasi~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.ap<-lme(c_parasi~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.ap<-lme(c_parasi~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.ap<-lme(c_parasi~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.ap<-lme(c_parasi~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.ap<-lme(c_parasi~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.ap<-lme(c_parasi~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.ap<-lme(c_parasi~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.ap<-lme(c_parasi~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.ap<-lme(c_parasi~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.ap<-lme(c_parasi~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.ap<-lme(c_parasi~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+abundhost.rp<-lme(c_parasi~c_total ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.ap,hete1km.ap,hete5km.ap,flo1km.ap,flo5km.ap,
+      fragsize.ap,con1km.ap,m.tam1km.flo5km.ap,m.tam1km.hete5km.ap,m.flo1km.hete5km.ap,
+      m.hete1km.flo5km.ap,m.con1km.flo5km.ap,m.con1km.hete5km.ap,abundhost.rp,
+      type="AICc",delta=T,nobs=length(29),weights=T,base=T)
+
+### Natural enemy taxonomic diversity
+
+nulo.dp<-glm(delta_mais_parasi~1, data=dados)
+hete1km.dp<-lme(delta_mais_parasi~shannon_1km ,random=~1|year, method = "REML", data=dados)
+hete5km.dp<-lme(delta_mais_parasi~shannon_5km ,random=~1|year, method = "REML", data=dados)
+flo1km.dp<-lme(delta_mais_parasi~flo_1km ,random=~1|year, method = "REML", data=dados)
+flo5km.dp<-lme(delta_mais_parasi~flo_5km ,random=~1|year, method = "REML", data=dados)
+fragsize.dp<-lme(delta_mais_parasi~frag_size ,random=~1|year, method = "REML", data=dados)
+con1km.dp<-lme(delta_mais_parasi~connect_1000m ,random=~1|year, method = "REML", data=dados)
+m.tam1km.flo5km.dp<-lme(delta_mais_parasi~frag_size+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.tam1km.hete5km.dp<-lme(delta_mais_parasi~frag_size+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.flo1km.hete5km.dp<-lme(delta_mais_parasi~flo_1km+shannon_5km ,random=~1|year, method = "REML", data=dados)
+m.hete1km.flo5km.dp<-lme(delta_mais_parasi~shannon_1km+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.flo5km.dp<-lme(delta_mais_parasi~connect_1000m+flo_5km ,random=~1|year, method = "REML", data=dados)
+m.con1km.hete5km.dp<-lme(delta_mais_parasi~connect_1000m+shannon_5km ,random=~1|year, method = "REML", data=dados)
+host.dp<-lme(delta_mais_parasi~delta_mais_host ,random=~1|year, method = "REML", data=dados)
+
+
+ICtab(nulo.dp,hete1km.dp,hete5km.dp,flo1km.dp,flo5km.dp,
+      fragsize.dp,con1km.dp,m.tam1km.flo5km.dp,m.tam1km.hete5km.dp,m.flo1km.hete5km.dp,
+      m.hete1km.flo5km.dp,m.con1km.flo5km.dp,m.con1km.hete5km.dp,host.dp,
+      type="AICc",delta=T,nobs=length(29),weights=T,base=T)

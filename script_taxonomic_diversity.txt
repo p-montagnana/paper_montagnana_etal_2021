@@ -1,0 +1,49 @@
+#' Paula Montagnana
+#' 2020 08 D05
+#' 
+#' Taxonomic diversity (Community Ecology)
+
+#' From Montagnana, PC et al (2021)"Landscape heterogeneity and forest cover shape
+#' cavity-nesting hymenopteran communities in a multi-scale perspective", 
+#' Basic and Applied Ecology
+#' Doi: 10.1016/j.baae.2021.08.004
+
+# Package
+require(vegan)
+
+# Directory
+setwd("F:\\DOUTORADO")
+
+### Table with abundance data for each bee and wasp species by landscape
+comm_bee<-read.table("comm_bee.txt", head=T,sep="\t")
+comm_wasp<-read.table("comm_wasp.txt", head=T,sep="\t")
+
+### Table with the taxonomic information of bee and wasp communities (separately)
+### Order, Family, Genus and Species
+dis_bee<-read.table("dis_bee.txt", head=T,sep="\t")
+dis_wasp<-read.table("dis_wasp.txt", head=T,sep="\t")
+
+
+###Bees
+
+#### The community table cannot have a column identifying landscapes;
+#### Therefore, this function removed the 1st column (landscapes)
+comm_bee_1<-comm_bee[,-1]
+
+
+taxbee<-taxa2dist(dis_bee, varstep=T)
+
+diver.bee<-taxondive(comm_bee_1,taxbee)
+diver.bee
+
+### Wasps
+
+
+#### The community table cannot have a column identifying landscapes;
+#### Therefore, this function removed the 1st column (landscapes)
+comm_wasp_1<-comm_wasp[,-1]
+
+taxwasp<-taxa2dist(dis_wasp, varstep=T)
+
+diver.wasp<-taxondive(comm_wasp_1,taxwasp)
+diver.wasp
