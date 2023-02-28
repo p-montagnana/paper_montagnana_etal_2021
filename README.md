@@ -4,9 +4,9 @@
 <b>Scripts in R language of the analyzes that compose the paper Montagnana et al. (2021)</b>
 - Taxonomic diversity
 - Mixed, univariate and bivariate models
-Response variables = Community Ecology metrics (species richness, abundance and
+- Response variables = Community Ecology metrics (species richness, abundance and
 taxonomic diversity)
-Predictive variables = Landscape Ecology metrics (% forest cover, landscape heterogeneity
+- Predictive variables = Landscape Ecology metrics (% forest cover, landscape heterogeneity
 (SHDI) and functional connectivity of forest fragments)
 
 ## <b>Montagnana, PC et al (2021) "Landscape heterogeneity and forest cover shape cavity-nesting hymenopteran communities in a multi-scale perspective", 
